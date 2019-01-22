@@ -72,7 +72,14 @@ for (( i=0; i < ${#data_files[@]}; i++)); do
         update_maps="True"
     fi
     this_data_file=$raw_data_dir/$filename
-    this_output_dir=$output_dir/$filename
+
+    if [[ "$filename" =~ "train" ]]; then
+        this_output_dir=$output_dir/train
+    elif [[ "$filename" =~ "dev" ]]; then
+        this_output_dir=$output_dir/dev
+    elif [[ "$filename" =~ "test" ]]; then
+        this_output_dir=$output_dir/test
+    fi
 
     echo "Processing file: $this_data_file"
 
