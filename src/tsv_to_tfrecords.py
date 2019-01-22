@@ -74,7 +74,7 @@ def shape(string):
         return "a"
 
 
-def get_str_label_from_line_conll(line):
+def _get_str_label_from_line_conll_bak(line):
     token_str, _, _, label_str = line.strip().split(' ')
     return token_str, label_str, ''
 
@@ -502,6 +502,11 @@ def tsv_to_examples():
                 print(num_docs, file=f)
             
     print("Embeddings coverage: %2.2f%%" % ((1-(num_oov/num_tokens)) * 100))
+
+
+def get_str_label_from_line_conll(line):
+    _, token_str, label_str = line.strip().split('\t')
+    return token_str, label_str, ''
 
 
 def main(argv):

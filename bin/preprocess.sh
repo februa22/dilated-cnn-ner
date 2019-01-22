@@ -1,5 +1,8 @@
 #!/bin/bash
 
+DILATED_CNN_NER_ROOT=`pwd`
+DATA_DIR=/Users/nhnent/dev/data/pos_sejong800k/conll
+
 conf=$1
 if [ ! -e $conf ]; then
     echo "No config file specified; Exiting."
@@ -50,12 +53,12 @@ if [ -d $raw_data_dir/${data_files[0]} ]; then
          | sort -rnk1 \
          | awk '{if ($1 >= 4) print $2}' > $update_vocab_file
 else
-    awk '{if (NF > 0) print $1}' "$raw_data_dir/${data_files[0]}" \
+    awk '{if (NF > 0) print $2}' "$raw_data_dir/${data_files[0]}" \
         | sed 's/[0-9]/0/g' \
         | sort \
         | uniq -c \
         | sort -rnk1 \
-        | awk '{if ($1 >= 4) print $2}' > $update_vocab_file
+        | awk '{if ($2 >= 4) print $3}' > $update_vocab_file
 fi
 
 echo "Writing output to $output_dir"
