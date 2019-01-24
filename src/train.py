@@ -84,11 +84,11 @@ def main(argv):
     # with open(dev_dir + '/sizes.txt', 'r') as f:
     #     num_dev_examples = int(f.readline()[:-1])
 
-    type_set = {}
+    type_set = {"O": 0}
     type_int_int_map = {}
     outside_set = ["O", "<PAD>",  "<S>",  "</S>", "<ZERO>"]
     for label, id in labels_str_id_map.items():
-        label_type = label if label in outside_set else label[2:]
+        label_type = label if label in outside_set else label
         if label_type not in type_set:
             type_set[label_type] = len(type_set)
         type_int_int_map[id] = type_set[label_type]
@@ -227,6 +227,7 @@ def main(argv):
         training_start_time = time.time()
         with sv.managed_session(FLAGS.master, config=tf.ConfigProto(allow_soft_placement=True)) as sess:
             def run_evaluation(eval_batches, extra_text=""):
+                print("data size: " + str(len(eval_batches)))
                 predictions = []
                 for b, (eval_label_batch, eval_token_batch, eval_shape_batch, eval_char_batch, eval_seq_len_batch, eval_tok_len_batch, eval_mask_batch) in enumerate(eval_batches):
                     batch_size, batch_seq_len = eval_token_batch.shape

@@ -55,34 +55,11 @@ def segment_eval(batches, predictions, label_map, type_int_int_map, labels_id_st
                     pred_prev = None if i == 0 else labels_id_str_map[predicted[i - 1]]
                     pred_type = type_int_int_map[pred]
                     gold_type = type_int_int_map[gold]
-                    pred_start = False
-                    gold_start = False
-                    if is_seg_start(pred_str, pred_prev):
-                        pred_counts[pred_type] += 1
-                        pred_start = True
-                    if is_seg_start(gold_str, gold_prev):
-                        gold_counts[gold_type] += 1
-                        gold_start = True
+                    pred_counts[pred_type] += 1
+                    gold_counts[gold_type] += 1
 
-                    if pred_start and gold_start and pred_type == gold_type:
-                        if i == seq_len - 1:
-                            correct_counts[gold_type] += 1
-                        else:
-                            j = i + 1
-                            stop_search = False
-                            while j < seq_len and not stop_search:
-                                pred2 = labels_id_str_map[predicted[j]]
-                                gold2 = labels_id_str_map[golds[j]]
-                                pred_type2 = type_int_int_map[predicted[j]]
-                                pred_continue = is_continue(pred2)
-                                gold_continue = is_continue(gold2)
-
-                                if not pred_continue or not gold_continue or pred_type2 != gold_type or j == seq_len - 1:
-                                    # if pred_continue == gold_continue:
-                                    if (not pred_continue and not gold_continue) or (pred_continue and gold_continue and pred_type2 == gold_type):
-                                        correct_counts[gold_type] += 1
-                                    stop_search = True
-                                j += 1
+                    if pred_type == gold_type:
+                        correct_counts[gold_type] += 1
                 start += seq_len + (2 if start_end else 1)*pad_width
 
     all_correct = np.sum([p if i not in outside_idx else 0 for i, p in enumerate(correct_counts.values())])
