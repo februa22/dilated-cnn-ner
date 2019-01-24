@@ -227,6 +227,7 @@ def main(argv):
         training_start_time = time.time()
         with sv.managed_session(FLAGS.master, config=tf.ConfigProto(allow_soft_placement=True)) as sess:
             def run_evaluation(eval_batches, extra_text=""):
+                print("data size: " + str(len(eval_batches)))
                 predictions = []
                 for b, (eval_label_batch, eval_token_batch, eval_shape_batch, eval_char_batch, eval_seq_len_batch, eval_tok_len_batch, eval_mask_batch) in enumerate(eval_batches):
                     batch_size, batch_seq_len = eval_token_batch.shape
