@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DILATED_CNN_NER_ROOT=`pwd`
-DATA_DIR=/Users/nhnent/dev/data/pos_sejong800k/conll
+DATA_DIR=/data/pos_sejong800k/conll
 
 conf=$1
 if [ ! -e $conf ]; then

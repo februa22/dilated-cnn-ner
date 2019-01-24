@@ -24,7 +24,6 @@ dev_fixed=`echo "$dev_dir" | sed 's/\*/\\\*/'`
 cmd="$DILATED_CNN_NER_ROOT/bin/train-cnn.sh \
 $conf \
 --evaluate_only \
---train_eval \
 --load_dir $model_dir \
 --dev_dir $dev_fixed \
 $additional_args"
