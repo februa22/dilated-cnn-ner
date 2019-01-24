@@ -10,6 +10,7 @@ import numpy as np
 import tensorflow as tf
 from glob import glob
 
+
 tf.app.flags.DEFINE_string('in_file', 'naacl-data.tsv', 'tsv file containing string data')
 tf.app.flags.DEFINE_string('vocab', '', 'file containing vocab (empty means make new vocab)')
 tf.app.flags.DEFINE_string('labels', '', 'file containing labels (but always add new labels)')
@@ -57,6 +58,7 @@ char_int_str_map = {}
 
 pad_width = int(FLAGS.window_size/2)
 onto_genre = ["bn", "bc", "nw", "mz", "tc", "wb"]
+
 
 def _int64_feature(value): return tf.train.Feature(int64_list=tf.train.Int64List(value=value))
 

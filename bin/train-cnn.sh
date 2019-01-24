@@ -1,5 +1,9 @@
 #!/bin/bash
 
+export DILATED_CNN_NER_ROOT=`pwd`
+export DATA_DIR=/data/ner_chang90k
+export CUDA_VISIBLE_DEVICES=-1
+
 conf=$1
 if [ ! -e $conf ]; then
     echo "No config file specified; Exiting."
