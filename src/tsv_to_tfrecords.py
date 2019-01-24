@@ -2,10 +2,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import re, os
+import os
+import re
 import sys
-import tensorflow as tf
+
 import numpy as np
+import tensorflow as tf
 from glob import glob
 
 tf.app.flags.DEFINE_string('in_file', 'naacl-data.tsv', 'tsv file containing string data')
@@ -70,8 +72,13 @@ def shape(string):
         return "a"
 
 
-def get_str_label_from_line_conll(line):
+def get_str_label_from_line_conll_bak(line):
     token_str, _, _, label_str = line.strip().split(' ')
+    return token_str, label_str, ''
+
+
+def get_str_label_from_line_conll(line):
+    _, token_str, label_str = line.strip().split('\t')
     return token_str, label_str, ''
 
 
@@ -101,7 +108,15 @@ def get_str_label_from_line_ontonotes(line, current_tag):
         raise
 
 
-def make_example(writer, lines, label_map, token_map, shape_map, char_map, update_vocab, update_chars):
+def make_example(writer,
+                 lines,
+                 label_map,
+                 token_map,
+                 shape_map,
+                 char_map,
+                 update_vocab,
+                 update_chars):
+    """
     # data format is:
     # token pos phrase ner
     # LONDON NNP I-NP I-LOC
@@ -111,6 +126,7 @@ def make_example(writer, lines, label_map, token_map, shape_map, char_map, updat
     # Indian NNP I-NP I-MISC
     # all-rounder NN I-NP O
     # ...
+    """
 
     sent_len = len(lines)
     num_breaks = sum([1 if line.strip() == "" else 0 for line in lines])

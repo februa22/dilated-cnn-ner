@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export DILATED_CNN_NER_ROOT=`pwd`
+export DATA_DIR=/data/ner_chang90k
+
 conf=$1
 if [ ! -e $conf ]; then
     echo "No config file specified; Exiting."
@@ -50,12 +53,12 @@ if [ -d $raw_data_dir/${data_files[0]} ]; then
          | sort -rnk1 \
          | awk '{if ($1 >= 4) print $2}' > $update_vocab_file
 else
-    awk '{if (NF > 0) print $1}' "$raw_data_dir/${data_files[0]}" \
+    awk '{if (NF > 0) print $2}' "$raw_data_dir/${data_files[0]}" \
         | sed 's/[0-9]/0/g' \
         | sort \
         | uniq -c \
         | sort -rnk1 \
-        | awk '{if ($1 >= 4) print $2}' > $update_vocab_file
+        | awk '{if ($2 >= 4) print $3}' > $update_vocab_file
 fi
 
 echo "Writing output to $output_dir"
@@ -69,7 +72,14 @@ for (( i=0; i < ${#data_files[@]}; i++)); do
         update_maps="True"
     fi
     this_data_file=$raw_data_dir/$filename
-    this_output_dir=$output_dir/$filename
+
+    if [[ "$filename" =~ "train" ]]; then
+        this_output_dir=$output_dir/train
+    elif [[ "$filename" =~ "dev" ]]; then
+        this_output_dir=$output_dir/dev
+    elif [[ "$filename" =~ "test" ]]; then
+        this_output_dir=$output_dir/test
+    fi
 
     echo "Processing file: $this_data_file"
 
