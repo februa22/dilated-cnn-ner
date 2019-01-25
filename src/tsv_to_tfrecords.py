@@ -117,7 +117,8 @@ def make_example(writer,
                  shape_map,
                  char_map,
                  update_vocab,
-                 update_chars):
+                 update_chars,
+                 use_bilou=False):
     """
     # data format is:
     # token pos phrase ner
@@ -191,17 +192,20 @@ def make_example(writer,
                     char_int_str_map[char_map[char]] = char
             tok_lens.append(len(token_str))
 
-            # convert label to BILOU encoding
-            label_bilou = label_str
-            # handle cases where we need to update the last token we processed
-            if label_str == "O" or label_str[0] == "B" or (last_label != "O" and label_str[2] != last_label[2]):
-                if last_label[0] == "I":
-                    labels[-1] = "L" + labels[-1][1:]
-                elif last_label[0] == "B":
-                    labels[-1] = "U" + labels[-1][1:]
-            if label_str[0] == "I":
-                if last_label == "O" or label_str[2] != last_label[2]:
-                    label_bilou = "B-" + label_str[2:]
+            if use_bilou:
+                # convert label to BILOU encoding
+                label_bilou = label_str
+                # handle cases where we need to update the last token we processed
+                if label_str == "O" or label_str[0] == "B" or (last_label != "O" and label_str[2] != last_label[2]):
+                    if last_label[0] == "I":
+                        labels[-1] = "L" + labels[-1][1:]
+                    elif last_label[0] == "B":
+                        labels[-1] = "U" + labels[-1][1:]
+                if label_str[0] == "I":
+                    if last_label == "O" or label_str[2] != last_label[2]:
+                        label_bilou = "B-" + label_str[2:]
+            else:
+                label_bilou = None
 
             if token_str_normalized not in token_map:
                 oov_count += 1
@@ -213,8 +217,8 @@ def make_example(writer,
             shapes[idx] = shape_map[token_shape]
             chars[char_start:char_start+tok_lens[-1]] = [char_map.get(char, char_map[OOV_STR]) for char in token_str]
             char_start += tok_lens[-1]
-            labels.append(label_bilou)
-            last_label = label_bilou
+            labels.append(label_bilou if use_bilou else label_str)
+            last_label = label_bilou if use_bilou else label_str
             idx += 1
         elif current_sent_len > 0:
             sent_lens.append(current_sent_len)

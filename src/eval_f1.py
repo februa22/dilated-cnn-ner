@@ -6,11 +6,11 @@ import sys
 
 
 def is_start(curr):
-    return curr[0] == "B" or curr[0] == "U"
+    return curr[-1] == "B"
 
 
 def is_continue(curr):
-    return curr[0] == "I" or curr[0] == "L"
+    return curr[-1] == "I"
 
 
 def is_background(curr):
@@ -18,7 +18,7 @@ def is_background(curr):
 
 
 def is_seg_start(curr, prev):
-    return (is_start(curr) and not is_continue(curr)) or (is_continue(curr) and (prev is None or is_background(prev) or prev[1:] != curr[1:]))
+    return (is_start(curr) and not is_continue(curr)) or (is_continue(curr) and (prev is None or is_background(prev) or prev[:-1] != curr[:-1]))
 
 
 def segment_eval(batches, predictions, label_map, type_int_int_map, labels_id_str_map, vocab_id_str_map, outside_idx, pad_width, start_end, extra_text="", verbose=False):

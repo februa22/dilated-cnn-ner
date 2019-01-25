@@ -88,7 +88,7 @@ def main(argv):
     type_int_int_map = {}
     outside_set = ["O", "<PAD>",  "<S>",  "</S>", "<ZERO>"]
     for label, id in labels_str_id_map.items():
-        label_type = label if label in outside_set else label[2:]
+        label_type = label if label in outside_set else label[:-2]
         if label_type not in type_set:
             type_set[label_type] = len(type_set)
         type_int_int_map[id] = type_set[label_type]
