@@ -58,7 +58,7 @@ else
         | sort \
         | uniq -c \
         | sort -rnk1 \
-        | awk '{if ($1 >= 4) print $2}' > $update_vocab_file
+        | awk '{if ($1 >= 1) print $2}' > $update_vocab_file
 fi
 
 echo "Writing output to $output_dir"
