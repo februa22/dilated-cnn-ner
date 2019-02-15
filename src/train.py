@@ -2,6 +2,7 @@
 from __future__ import division
 from __future__ import print_function
 
+import io
 import json
 import os
 import sys
@@ -38,19 +39,19 @@ def main(argv):
     
     # print('\n'.join(sorted(["%s : %s" % (str(k), str(v)) for k, v in FLAGS.__dict__['__flags'].items()])))
 
-    with open(maps_dir + '/label.txt', 'r') as f:
+    with io.open(maps_dir + '/label.txt', 'r', encoding='utf-8') as f:
         labels_str_id_map = {l.split('\t')[0]: int(l.split('\t')[1].strip()) for l in f.readlines()}
         labels_id_str_map = {i: s for s, i in labels_str_id_map.items()}
         labels_size = len(labels_id_str_map)
-    with open(maps_dir + '/token.txt', 'r') as f:
+    with io.open(maps_dir + '/token.txt', 'r', encoding='utf-8') as f:
         vocab_str_id_map = {l.split('\t')[0]: int(l.split('\t')[1].strip()) for l in f.readlines()}
         vocab_id_str_map = {i: s for s, i in vocab_str_id_map.items()}
         vocab_size = len(vocab_id_str_map)
-    with open(maps_dir + '/shape.txt', 'r') as f:
+    with io.open(maps_dir + '/shape.txt', 'r', encoding='utf-8') as f:
         shape_str_id_map = {l.split('\t')[0]: int(l.split('\t')[1].strip()) for l in f.readlines()}
         shape_id_str_map = {i: s for s, i in shape_str_id_map.items()}
         shape_domain_size = len(shape_id_str_map)
-    with open(maps_dir + '/char.txt', 'r') as f:
+    with io.open(maps_dir + '/char.txt', 'r', encoding='utf-8') as f:
         char_str_id_map = {l.split('\t')[0]: int(l.split('\t')[1].strip()) for l in f.readlines()}
         char_id_str_map = {i: s for s, i in char_str_id_map.items()}
         char_domain_size = len(char_id_str_map)
@@ -79,7 +80,7 @@ def main(argv):
     num_dev_tokens = 0
     for size_file in dev_size_files:
         print(size_file)
-        with open(size_file, 'r') as f:
+        with io.open(size_file, 'r', encoding='utf-8') as f:
             num_dev_examples += int(f.readline()[:-1])
             num_dev_tokens += int(f.readline()[:-1])
 
@@ -104,7 +105,7 @@ def main(argv):
     embeddings = tf_utils.embedding_values(embeddings_shape, old=False)
     embeddings_used = 0
     if FLAGS.embeddings != '':
-        with open(FLAGS.embeddings, 'r') as f:
+        with io.open(FLAGS.embeddings, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 split_line = line.strip().split(" ")
                 word = split_line[0]
