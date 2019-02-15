@@ -55,6 +55,7 @@ cmd="python src/train.py \
 --initialization $initialization \
 --char_dim $char_dim \
 --char_tok_dim $char_tok_dim \
+--char_input_dropout $char_input_dropout \
 --shape_dim $shape_dim \
 --layers \"$layers\" \
 --model $model \
