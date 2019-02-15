@@ -1,19 +1,24 @@
+# coding=utf-8
 from __future__ import division
 from __future__ import print_function
+
+import json
+import os
 import sys
 import time
-import tensorflow as tf
+from os import listdir
+
 import numpy as np
-from data_utils import SeqBatcher, Batcher
-from cnn import CNN
+import tensorflow as tf
+
+import eval_f1 as evaluation
+import tf_utils
 from bilstm import BiLSTM
 from bilstm_char import BiLSTMChar
+from cnn import CNN
 from cnn_char import CNNChar
-import eval_f1 as evaluation
-import json
-import tf_utils
-from os import listdir
-import os
+from data_utils import Batcher
+from data_utils import SeqBatcher
 
 FLAGS = tf.app.flags.FLAGS
 
