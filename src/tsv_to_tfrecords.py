@@ -1,15 +1,16 @@
+# coding=utf-8
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import io
 import os
 import re
 import sys
+from glob import glob
 
 import numpy as np
 import tensorflow as tf
-from glob import glob
-
 
 tf.app.flags.DEFINE_string('in_file', 'naacl-data.tsv', 'tsv file containing string data')
 tf.app.flags.DEFINE_string('vocab', '', 'file containing vocab (empty means make new vocab)')
@@ -39,12 +40,12 @@ tf.app.flags.DEFINE_string('dataset', 'conll', 'which dataset')
 
 FLAGS = tf.app.flags.FLAGS
 
-ZERO_STR = "<ZERO>"
-PAD_STR = "<PAD>"
-OOV_STR = "<OOV>"
-NONE_STR = "<NONE>"
-SENT_START = "<S>"
-SENT_END = "</S>"
+ZERO_STR = u"<ZERO>"
+PAD_STR = u"<PAD>"
+OOV_STR = u"<OOV>"
+NONE_STR = u"<NONE>"
+SENT_START = u"<S>"
+SENT_END = u"</S>"
 
 pad_strs = [PAD_STR, SENT_START, SENT_END, ZERO_STR, NONE_STR]
 
@@ -331,7 +332,7 @@ def tsv_to_examples():
     # load vocab if we have one
     if FLAGS.vocab != '':
         update_vocab = False
-        with open(FLAGS.vocab, 'r') as f:
+        with io.open(FLAGS.vocab, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 word = line.strip().split(" ")[0]
                 if word not in token_map:
@@ -339,7 +340,7 @@ def tsv_to_examples():
                     token_map[word] = len(token_map)
                     token_int_str_map[token_map[word]] = word
     if FLAGS.update_vocab != '':
-        with open(FLAGS.update_vocab, 'r') as f:
+        with io.open(FLAGS.update_vocab, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 word = line.strip().split(" ")[0]
                 if word not in token_map:
@@ -349,7 +350,7 @@ def tsv_to_examples():
 
     # load labels if given
     if FLAGS.labels != '':
-        with open(FLAGS.labels, 'r') as f:
+        with io.open(FLAGS.labels, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 label, idx = line.strip().split("\t")
                 label_map[label] = int(idx)
@@ -357,7 +358,7 @@ def tsv_to_examples():
 
     # load shapes if given
     if FLAGS.shapes != '':
-        with open(FLAGS.shapes, 'r') as f:
+        with io.open(FLAGS.shapes, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 shape, idx = line.strip().split("\t")
                 shape_map[shape] = int(idx)
@@ -365,7 +366,7 @@ def tsv_to_examples():
     # load chars if given
     if FLAGS.chars != '':
         update_chars = FLAGS.update_maps
-        with open(FLAGS.chars, 'r') as f:
+        with io.open(FLAGS.chars, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 char, idx = line.strip().split("\t")
                 char_map[char] = int(idx)
@@ -381,7 +382,7 @@ def tsv_to_examples():
         if not os.path.exists(FLAGS.out_dir):
             print("Output directory not found: %s" % FLAGS.out_dir)
         writer = tf.python_io.TFRecordWriter(FLAGS.out_dir + '/examples.proto')
-        with open(FLAGS.in_file) as f:
+        with io.open(FLAGS.in_file, encoding='utf-8') as f:
             line_buf = []
             line = f.readline()
             line_idx = 1
@@ -425,7 +426,7 @@ def tsv_to_examples():
         # export the string->int maps to file
         for f_str, id_map in [('label', label_map), ('token', token_map), ('shape', shape_map), ('char', char_map)]:
             with open(FLAGS.out_dir + '/' + f_str + '.txt', 'w') as f:
-                [f.write(s + '\t' + str(i) + '\n') for (s, i) in id_map.items()]
+                [f.write(s.encode('utf-8') + '\t' + str(i) + '\n') for (s, i) in id_map.items()]
 
         # export data sizes to file
         with open(FLAGS.out_dir + "/sizes.txt", 'w') as f:
