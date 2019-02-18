@@ -5,6 +5,7 @@ from __future__ import print_function
 import io
 import json
 import os
+import pickle
 import sys
 import time
 from os import listdir
@@ -119,6 +120,19 @@ def main(argv):
                     embeddings[vocab_str_id_map[word.lower()] - 1] = map(float, embedding)
     print("Loaded %d/%d embeddings (%2.2f%% coverage)" % (embeddings_used, vocab_size, embeddings_used/vocab_size*100))
 
+    # load label_encoding
+    label_encodings_size = 29
+    label_encodings_shape = (vocab_size, label_encodings_size)
+    label_encodings = np.zeros(label_encodings_shape, dtype="float32")
+    if FLAGS.label_encodings != '':
+        with open(FLAGS.label_encodings, 'rb') as f:
+            label_encoding = pickle.load(f)
+        for word, label_encoding in label_encoding.items():
+            if word in vocab_str_id_map:
+                label_encodings[vocab_str_id_map[word]] = map(float, label_encoding)
+            elif word.lower() in vocab_str_id_map:
+                label_encodings[vocab_str_id_map[word.lower()]] = map(float, label_encoding)
+
     layers_map = sorted(json.loads(FLAGS.layers.replace("'", '"')).items()) if FLAGS.model == 'cnn' else None
 
     pad_width = int(layers_map[0][1]['width']/2) if layers_map is not None else 1
@@ -160,6 +174,8 @@ def main(argv):
                     repeats=FLAGS.block_repeats,
                     share_repeats=FLAGS.share_repeats,
                     char_embeddings=char_embeddings,
+                    label_encodings=label_encodings,
+                    label_encodings_size=label_encodings_size,
                     embeddings=embeddings)
         elif FLAGS.model == "bilstm":
             model = BiLSTM(
@@ -541,6 +557,7 @@ if __name__ == '__main__':
 
     tf.app.flags.DEFINE_integer('log_every', 2, 'log status every k steps')
     tf.app.flags.DEFINE_string('embeddings', '', 'file of pretrained embeddings to use')
+    tf.app.flags.DEFINE_string('label_encodings', '', 'file of pretrained label encodings to use')
     tf.app.flags.DEFINE_string('nonlinearity', 'relu', 'nonlinearity function to use (tanh, sigmoid, relu)')
     tf.app.flags.DEFINE_boolean('until_convergence', False, 'whether to run until convergence')
     tf.app.flags.DEFINE_boolean('evaluate_only', False, 'whether to only run evaluation')

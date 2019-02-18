@@ -4,6 +4,8 @@ export DILATED_CNN_NER_ROOT=`pwd`
 export DATA_DIR=/data/ner_chang90k
 export CUDA_VISIBLE_DEVICES=-1
 
+label_encodings=$DATA_DIR/ner_chang90k.conll.train_dev.label_encoding.pkl
+
 conf=$1
 if [ ! -e $conf ]; then
     echo "No config file specified; Exiting."
@@ -42,6 +44,7 @@ cmd="python src/train.py \
 --model_dir $model_dir \
 --embed_dim $embedding_dim \
 --embeddings $embeddings \
+--label_encodings $label_encodings \
 --lstm_dim $num_filters \
 --num_filters $num_filters \
 --input_dropout $input_dropout \

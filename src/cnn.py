@@ -9,7 +9,7 @@ class CNN(object):
 
     def __init__(self, num_classes, vocab_size, shape_domain_size, char_domain_size, char_size, embedding_size,
                  shape_size, nonlinearity, layers_map, viterbi, projection, loss, margin, repeats, share_repeats,
-                 char_embeddings, embeddings=None):
+                 char_embeddings, label_encodings, label_encodings_size, embeddings=None):
 
         self.num_classes = num_classes
         self.shape_domain_size = shape_domain_size
@@ -17,6 +17,7 @@ class CNN(object):
         self.char_size = char_size
         self.embedding_size = embedding_size
         self.shape_size = shape_size
+        self.label_encodings_size = label_encodings_size
         self.nonlinearity = nonlinearity
         self.layers_map = layers_map
         self.projection = projection
@@ -59,6 +60,7 @@ class CNN(object):
 
         self.use_characters = char_size != 0
         self.use_shape = shape_size != 0
+        self.use_label_encodings = label_encodings_size != 0
 
         self.ones = tf.ones([self.batch_size, self.max_seq_len, self.num_classes])
 
@@ -67,6 +69,9 @@ class CNN(object):
 
         word_embeddings_shape = (vocab_size-1, embedding_size)
         self.w_e = tf_utils.initialize_embeddings(word_embeddings_shape, name="w_e", pretrained=embeddings, old=False)
+
+        # label_encodings
+        self.label_encodings = tf.get_variable(name="label_encodings", initializer=label_encodings, trainable=False)
 
         self.block_unflat_scores, self.hidden_layer = self.forward(self.input_x1, self.input_x2, self.max_seq_len,
                                           self.hidden_dropout_keep_prob,
@@ -169,6 +174,10 @@ class CNN(object):
                 shape_embeddings = tf.nn.embedding_lookup(w_s, input_x2)
                 input_list.append(shape_embeddings)
                 input_size += self.shape_size
+            if self.use_label_encodings:
+                label_encodings = tf.nn.embedding_lookup(self.label_encodings, input_x1)
+                input_list.append(label_encodings)
+                input_size += self.label_encodings_size
 
             initial_filter_width = self.layers_map[0][1]['width']
             initial_num_filters = self.layers_map[0][1]['filters']
