@@ -37,10 +37,10 @@ def update_token_label_counts(path, token_label_counts):
 
             _, token, label = line.split()
             if label == "O":
-                return token_label_counts
+                continue
 
             if token not in token_label_counts:
-                token_label_counts[token][label] = 1
+                token_label_counts[token] = {label: 1}
             elif label not in token_label_counts[token]:
                 token_label_counts[token][label] = 1
             else:
