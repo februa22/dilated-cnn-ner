@@ -62,10 +62,10 @@ def load_labels(path):
 
 
 if __name__ == "__main__":
-    train_filename = ""
-    dev_filename = ""
-    labels_file = ""
-    token_label_encoding_file = ""
+    train_filename = "/data/ner_chang90k/ner_chang90k.conll.train"
+    dev_filename = "/data/ner_chang90k/ner_chang90k.conll.dev"
+    labels_file = "/home/diquest/jongseong/workspace/dilated-cnn-ner_class/data/conll2003-w3-lample/train/label.txt"
+    token_label_encoding_file = "/data/ner_chang90k/ner_chang90k.conll.train_dev.label_encoding.pkl"
 
     data_files = [train_filename, dev_filename]
     make_token_label_encoding(data_files, labels_file, token_label_encoding_file)
